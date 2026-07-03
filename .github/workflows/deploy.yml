@@ -1,0 +1,70 @@
+name: Deploy to VPS
+
+# Runs after images are published to GHCR (push to main), or manually.
+on:
+  workflow_run:
+    workflows: ["Docker Publish (GHCR)"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to deploy (default: latest)"
+        required: false
+        default: "latest"
+
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: SSH deploy
+    runs-on: ubuntu-latest
+    # Auto-deploy only if the publish succeeded; manual runs always proceed.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Ship the latest compose file to the VPS deploy dir (keeps .env untouched).
+      - name: Copy compose to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: deploy/docker-compose.prod.yml
+          target: ${{ secrets.VPS_DEPLOY_PATH }}
+          strip_components: 1
+          overwrite: true
+
+      - name: Pull & restart on VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          envs: IMAGE_TAG,GHCR_USER,GHCR_TOKEN,DEPLOY_PATH
+          script: |
+            set -euo pipefail
+            # Strip stray CR/LF/spaces in case the secret was pasted with a newline.
+            DEPLOY_PATH="$(printf '%s' "$DEPLOY_PATH" | tr -d '[:space:]')"
+            IMAGE_TAG="$(printf '%s' "$IMAGE_TAG" | tr -d '[:space:]')"
+            cd "$DEPLOY_PATH"
+            # GHCR login only needed for PRIVATE packages. Public images skip it.
+            if [ -n "$(printf '%s' "$GHCR_TOKEN" | tr -d '[:space:]')" ]; then
+              printf '%s' "$GHCR_TOKEN" | tr -d '[:space:]' | docker login ghcr.io -u "$(printf '%s' "$GHCR_USER" | tr -d '[:space:]')" --password-stdin
+            fi
+            export IMAGE_TAG
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            docker image prune -f
+            docker compose -f docker-compose.prod.yml ps
+        env:
+          IMAGE_TAG: ${{ github.event.inputs.image_tag || 'latest' }}
+          GHCR_USER: ${{ secrets.GHCR_USER }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH }}
