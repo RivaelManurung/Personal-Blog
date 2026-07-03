@@ -28,18 +28,22 @@ export function CoverImageField({
   const [altText, setAltText] = useState(value?.altText ?? "");
   const [isPending, startTransition] = useTransition();
 
-  const handleFile = (file: File) => {
+  const handleFile = (file: File, inputEl?: HTMLInputElement | null) => {
     const formData = new FormData();
     formData.set("file", file);
-    formData.set("altText", altText);
+    formData.set("altText", altText || file.name.replace(/\.[^/.]+$/, ""));
     startTransition(async () => {
-      const result = await uploadMediaAction(formData);
-      if (result.ok && result.media) {
-        onChange(result.media);
-        setAltText(result.media.altText || altText);
-        toast.success("Image uploaded");
-      } else {
-        toast.error(result.error ?? "Upload failed");
+      try {
+        const result = await uploadMediaAction(formData);
+        if (result.ok && result.media) {
+          onChange(result.media);
+          setAltText(result.media.altText || altText);
+          toast.success("Image uploaded");
+        } else {
+          toast.error(result.error ?? "Upload failed");
+        }
+      } finally {
+        if (inputEl) inputEl.value = "";
       }
     });
   };
@@ -60,8 +64,7 @@ export function CoverImageField({
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) handleFile(file);
-          e.target.value = "";
+          if (file) handleFile(file, e.target);
         }}
       />
 

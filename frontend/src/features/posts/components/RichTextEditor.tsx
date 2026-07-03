@@ -95,12 +95,14 @@ export function RichTextEditor({ value, onChange, placeholder, ref }: RichTextEd
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const handleImageFile = useCallback(
-    async (file: File) => {
+    async (file: File, inputEl?: HTMLInputElement | null) => {
       if (!editor) return;
       setIsUploadingImage(true);
       try {
         const formData = new FormData();
         formData.set("file", file);
+        const alt = file.name.replace(/\.[^/.]+$/, "") || "image";
+        formData.set("altText", alt);
         const result = await uploadMediaAction(formData);
         if (!result.ok || !result.media) {
           toast.error(result.error ?? "Image upload failed");
@@ -111,11 +113,13 @@ export function RichTextEditor({ value, onChange, placeholder, ref }: RichTextEd
           toast.error("Uploaded image has no URL");
           return;
         }
-        editor.chain().focus().setImage({ src, alt: result.media.altText }).run();
+        editor.chain().focus().setImage({ src, alt: result.media.altText || alt }).run();
+        toast.success("Image inserted");
       } catch (error: unknown) {
         toast.error(error instanceof Error ? error.message : "Image upload failed");
       } finally {
         setIsUploadingImage(false);
+        if (inputEl) inputEl.value = "";
       }
     },
     [editor],
@@ -191,8 +195,7 @@ export function RichTextEditor({ value, onChange, placeholder, ref }: RichTextEd
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file) void handleImageFile(file);
-            e.target.value = "";
+            if (file) void handleImageFile(file, e.target);
           }}
         />
         <Separator orientation="vertical" className="mx-1 h-5" />
