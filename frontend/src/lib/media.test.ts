@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { MEDIA_ORIGIN } from "@/lib/config/site";
-import { mediaSrc } from "@/lib/media";
+import { SITE } from "@/lib/config/site";
+import { mediaSrc, absoluteMediaSrc } from "@/lib/media";
 import type { Media } from "@/types/api";
 
 function makeMedia(url: string): Media {
@@ -20,10 +20,8 @@ describe("mediaSrc", () => {
     expect(mediaSrc(makeMedia(""))).toBeNull();
   });
 
-  it("prefixes a relative url with MEDIA_ORIGIN", () => {
-    expect(mediaSrc(makeMedia("/uploads/x.jpg"))).toBe(
-      `${MEDIA_ORIGIN}/uploads/x.jpg`,
-    );
+  it("returns a relative url unchanged for same-origin proxying", () => {
+    expect(mediaSrc(makeMedia("/uploads/x.jpg"))).toBe("/uploads/x.jpg");
   });
 
   it("returns an absolute http url unchanged", () => {
@@ -36,3 +34,21 @@ describe("mediaSrc", () => {
     expect(mediaSrc(makeMedia(url))).toBe(url);
   });
 });
+
+describe("absoluteMediaSrc", () => {
+  it("returns null for null", () => {
+    expect(absoluteMediaSrc(null)).toBeNull();
+  });
+
+  it("prefixes a relative url with SITE.url", () => {
+    expect(absoluteMediaSrc(makeMedia("/uploads/x.jpg"))).toBe(
+      `${SITE.url}/uploads/x.jpg`,
+    );
+  });
+
+  it("returns an absolute url unchanged", () => {
+    const url = "https://cdn.example.com/x.jpg";
+    expect(absoluteMediaSrc(makeMedia(url))).toBe(url);
+  });
+});
+

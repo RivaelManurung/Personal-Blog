@@ -16,9 +16,9 @@ const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: blob: ${backendOrigin} https:`,
+  `img-src 'self' data: blob: ${backendOrigin} http: https:`,
   "font-src 'self' data:",
-  `connect-src 'self' ${backendOrigin}`,
+  `connect-src 'self' ${backendOrigin} http: https: ws: wss:`,
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -56,6 +56,14 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/uploads/:path*",
+        destination: `${backendOrigin}/uploads/:path*`,
+      },
+    ];
   },
 };
 

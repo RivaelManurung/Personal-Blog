@@ -1,6 +1,6 @@
 import type { PostDetail } from "@/types/api";
 import { SITE } from "@/lib/config/site";
-import { mediaSrc } from "@/lib/media";
+import { absoluteMediaSrc } from "@/lib/media";
 import { isoDate } from "@/lib/format/date";
 
 type JsonLdValue = Record<string, unknown>;
@@ -60,7 +60,7 @@ export function breadcrumbJsonLd(crumbs: Crumb[]): JsonLdValue {
 
 export function blogPostingJsonLd(post: PostDetail): JsonLdValue {
   const url = `${SITE.url}/articles/${post.slug}`;
-  const image = mediaSrc(post.ogImage) ?? mediaSrc(post.coverImage) ?? undefined;
+  const image = absoluteMediaSrc(post.ogImage) ?? absoluteMediaSrc(post.coverImage) ?? undefined;
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",

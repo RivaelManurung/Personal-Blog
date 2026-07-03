@@ -56,7 +56,7 @@ export function RichTextEditor({ value, onChange, placeholder, ref }: RichTextEd
       // @tiptap/extension-link below is the single source (no duplicate names).
       StarterKit.configure({ heading: { levels: [2, 3] }, link: false }),
       Link.configure({ openOnClick: false, autolink: true, HTMLAttributes: { rel: "noopener noreferrer" } }),
-      Image.configure({ inline: false, HTMLAttributes: { class: "rounded-lg" } }),
+      Image.configure({ inline: false, HTMLAttributes: { class: "rounded-lg max-h-[500px] w-auto my-4 border border-border shadow-sm object-cover mx-auto" } }),
       Placeholder.configure({ placeholder: placeholder ?? "Write your story…" }),
     ],
     content: value || "",
