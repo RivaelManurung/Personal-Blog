@@ -1,0 +1,130 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - generic [ref=f3e5]:
+      - link "AshGray Editor console" [ref=f3e7] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=f3e9]
+        - generic [ref=f3e11]:
+          - generic [ref=f3e12]: AshGray
+          - generic [ref=f3e13]: Editor console
+      - generic [ref=f3e15]:
+        - generic [ref=f3e16]: Workspace
+        - list [ref=f3e18]:
+          - listitem [ref=f3e19]:
+            - link "Dashboard" [ref=f3e20] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=f3e21]
+              - generic [ref=f3e26]: Dashboard
+          - listitem [ref=f3e27]:
+            - link "Posts" [ref=f3e28] [cursor=pointer]:
+              - /url: /admin/posts
+              - img [ref=f3e29]
+              - generic [ref=f3e32]: Posts
+          - listitem [ref=f3e33]:
+            - link "Taxonomy" [ref=f3e34] [cursor=pointer]:
+              - /url: /admin/taxonomy
+              - img [ref=f3e35]
+              - generic [ref=f3e39]: Taxonomy
+          - listitem [ref=f3e40]:
+            - link "Settings" [ref=f3e41] [cursor=pointer]:
+              - /url: /admin/settings
+              - img [ref=f3e42]
+              - generic [ref=f3e45]: Settings
+      - list [ref=f3e47]:
+        - listitem [ref=f3e48]:
+          - button "A admin admin@ashgray.blog" [ref=f3e49]:
+            - generic [ref=f3e50]: A
+            - generic [ref=f3e51]:
+              - generic [ref=f3e52]: admin
+              - generic [ref=f3e53]: admin@ashgray.blog
+            - img [ref=f3e54]
+      - button "Toggle Sidebar" [ref=f3e57]
+    - main [ref=f3e58]:
+      - generic [ref=f3e59]:
+        - button "Toggle Sidebar" [ref=f3e60]:
+          - img
+          - generic [ref=f3e61]: Toggle Sidebar
+        - navigation "breadcrumb" [ref=f3e62]:
+          - list [ref=f3e63]:
+            - listitem [ref=f3e64]:
+              - link "Dashboard" [ref=f3e65] [cursor=pointer]:
+                - /url: /admin
+            - listitem [ref=f3e66]:
+              - img [ref=f3e67]
+            - listitem [ref=f3e69]:
+              - link "Posts" [ref=f3e70] [cursor=pointer]:
+                - /url: /admin/posts
+            - listitem [ref=f3e71]:
+              - img [ref=f3e72]
+            - listitem [ref=f3e74]:
+              - link "New" [disabled] [ref=f3e75]
+      - generic [ref=f3e77]:
+        - generic [ref=f3e78]:
+          - generic [ref=f3e79]:
+            - heading "New post" [level=1] [ref=f3e80]
+            - paragraph [ref=f3e81]: /articles/untitled
+          - generic [ref=f3e82]:
+            - button "Cancel" [ref=f3e83]
+            - button "Create post" [ref=f3e84]:
+              - img
+              - text: Create post
+        - generic [ref=f3e85]:
+          - tablist [ref=f3e86]:
+            - tab "Content" [selected] [ref=f3e87]
+            - tab "SEO" [ref=f3e88]
+            - tab "Publish" [ref=f3e89]
+          - tabpanel "Content" [ref=f3e90]:
+            - generic [ref=f3e91]:
+              - generic [ref=f3e92]:
+                - generic [ref=f3e93]:
+                  - generic [ref=f3e94]: Start from a README
+                  - generic [ref=f3e95]:
+                    - button "Upload a README or Markdown file" [ref=f3e96] [cursor=pointer]:
+                      - img [ref=f3e97]
+                      - paragraph [ref=f3e101]: Import a README or Markdown file
+                      - paragraph [ref=f3e102]:
+                        - text: Drag & drop or click to upload a
+                        - code [ref=f3e103]: .md
+                        - text: — it becomes an editable draft.
+                    - button "Or paste Markdown" [ref=f3e105]:
+                      - img
+                      - text: Or paste Markdown
+                - generic [ref=f3e106]:
+                  - generic [ref=f3e107]: Title
+                  - textbox "Title" [ref=f3e108]:
+                    - /placeholder: An arresting headline
+                - generic [ref=f3e109]:
+                  - generic [ref=f3e110]: Slug
+                  - generic [ref=f3e111]:
+                    - textbox "Slug" [ref=f3e112]:
+                      - /placeholder: auto-generated
+                    - button "From title" [ref=f3e113]
+                - generic [ref=f3e114]:
+                  - generic [ref=f3e115]: Excerpt
+                  - textbox "Excerpt" [ref=f3e116]:
+                    - /placeholder: A one or two sentence summary.
+                - generic [ref=f3e118]:
+                  - generic [ref=f3e119]: Body
+                  - generic [ref=f3e120]: 0 words · 1 min read
+              - generic [ref=f3e122]:
+                - generic [ref=f3e123]:
+                  - generic [ref=f3e124]:
+                    - generic [ref=f3e125]: Cover image
+                    - paragraph [ref=f3e126]: Shown on cards and at the top of the article.
+                  - button "Upload an image" [ref=f3e127]:
+                    - img [ref=f3e128]
+                    - generic [ref=f3e132]: Upload an image
+                  - generic [ref=f3e133]:
+                    - generic [ref=f3e134]: Alt text
+                    - textbox "Alt text" [ref=f3e135]:
+                      - /placeholder: Describe the image for accessibility
+                - generic [ref=f3e136]:
+                  - generic [ref=f3e137]: Category
+                  - combobox [ref=f3e138]:
+                    - img
+                  - combobox [ref=f3e139]
+                - generic [ref=f3e140]:
+                  - generic [ref=f3e141]: Tags
+                  - button "Inspiration" [ref=f3e143]
+    - region "Notifications alt+T"
+  - alert [ref=f3e144]

@@ -1,0 +1,24 @@
+# Secrets & local env
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+bin/
+server
+migrate
+seed
+*.test
+*.out
+
+# Local uploaded media (never bake into the image)
+storage/uploads/
+
+# Docker/meta
+Dockerfile
+.dockerignore
+.git
+.gitignore
+
+# Docs (optional)
+*.md

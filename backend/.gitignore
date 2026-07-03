@@ -1,0 +1,13 @@
+# Environment
+.env
+
+# Build output
+/bin/
+server
+
+# Uploaded media (local storage driver)
+/storage/uploads/
+
+# Go
+*.test
+*.out

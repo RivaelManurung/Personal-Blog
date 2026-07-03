@@ -1,0 +1,97 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e17]: Dashboard · AshGray
+  - generic [ref=e18]:
+    - generic [ref=e21]:
+      - link "AshGray Editor console" [ref=e23] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e25]
+        - generic [ref=e27]:
+          - generic [ref=e28]: AshGray
+          - generic [ref=e29]: Editor console
+      - generic [ref=e31]:
+        - generic [ref=e32]: Workspace
+        - list [ref=e34]:
+          - listitem [ref=e35]:
+            - link "Dashboard" [ref=e36] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=e37]
+              - generic [ref=e42]: Dashboard
+          - listitem [ref=e43]:
+            - link "Posts" [ref=e44] [cursor=pointer]:
+              - /url: /admin/posts
+              - img [ref=e45]
+              - generic [ref=e48]: Posts
+          - listitem [ref=e49]:
+            - link "Taxonomy" [ref=e50] [cursor=pointer]:
+              - /url: /admin/taxonomy
+              - img [ref=e51]
+              - generic [ref=e55]: Taxonomy
+          - listitem [ref=e56]:
+            - link "Settings" [ref=e57] [cursor=pointer]:
+              - /url: /admin/settings
+              - img [ref=e58]
+              - generic [ref=e61]: Settings
+      - list [ref=e63]:
+        - listitem [ref=e64]:
+          - button "A admin admin@ashgray.blog" [ref=e65]:
+            - generic [ref=e66]: A
+            - generic [ref=e67]:
+              - generic [ref=e68]: admin
+              - generic [ref=e69]: admin@ashgray.blog
+            - img [ref=e70]
+      - button "Toggle Sidebar" [ref=e73]
+    - main [ref=e74]:
+      - generic [ref=e75]:
+        - button "Toggle Sidebar" [ref=e76]:
+          - img
+          - generic [ref=e77]: Toggle Sidebar
+        - navigation "breadcrumb" [ref=e78]:
+          - list [ref=e79]:
+            - listitem [ref=e80]:
+              - link "Dashboard" [disabled] [ref=e81]
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - heading "Overview" [level=1] [ref=e86]
+            - paragraph [ref=e87]: A pulse on your library — what is live, drafted, and queued.
+          - link "New post" [ref=e88] [cursor=pointer]:
+            - /url: /admin/posts/new
+            - img
+            - text: New post
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - generic [ref=e92]: Total posts
+              - img [ref=e93]
+            - paragraph [ref=e97]: "1"
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - generic [ref=e100]: Published
+              - img [ref=e101]
+            - paragraph [ref=e105]: "1"
+          - generic [ref=e106]:
+            - generic [ref=e107]:
+              - generic [ref=e108]: Drafts
+              - img [ref=e109]
+            - paragraph [ref=e112]: "0"
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]: Scheduled
+              - img [ref=e116]
+            - paragraph [ref=e121]: "0"
+        - generic [ref=e122]:
+          - generic [ref=e123]:
+            - generic [ref=e124]: Recently updated
+            - link "All posts" [ref=e125] [cursor=pointer]:
+              - /url: /admin/posts
+              - text: All posts
+              - img [ref=e126]
+          - list [ref=e130]:
+            - listitem [ref=e131]:
+              - link "Journey Through Life's Spectrum Lifestyle · updated Jul 2, 2026 Published" [ref=e132] [cursor=pointer]:
+                - /url: /admin/posts/1/edit
+                - generic [ref=e133]:
+                  - paragraph [ref=e134]: Journey Through Life's Spectrum
+                  - paragraph [ref=e135]: Lifestyle · updated Jul 2, 2026
+                - generic [ref=e136]: Published
+    - region "Notifications alt+T"

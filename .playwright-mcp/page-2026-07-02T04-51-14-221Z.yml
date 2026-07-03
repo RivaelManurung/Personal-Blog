@@ -1,0 +1,111 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "AshGray" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - navigation "Main navigation" [ref=e7]:
+          - list [ref=e8]:
+            - listitem [ref=e9]:
+              - link "Home" [ref=e10] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e11]:
+              - link "Articles" [ref=e12] [cursor=pointer]:
+                - /url: /articles
+            - listitem [ref=e13]:
+              - link "Categories" [ref=e14] [cursor=pointer]:
+                - /url: /categories
+            - listitem [ref=e15]:
+              - link "About" [ref=e16] [cursor=pointer]:
+                - /url: /about
+    - main [ref=e17]:
+      - generic [ref=e18]:
+        - region "Journeys through life's spectrum." [ref=e19]:
+          - paragraph [ref=e20]: AshGray — Editorial
+          - heading "Journeys through life's spectrum." [level=1] [ref=e21]:
+            - text: Journeys through
+            - emphasis [ref=e22]: life's
+            - text: spectrum.
+        - generic [ref=e23]:
+          - article [ref=e25]:
+            - generic [ref=e29]:
+              - generic [ref=e30]: Lifestyle
+              - time [ref=e31]: Jul 2, 2026
+            - generic [ref=e32]: "001"
+            - generic [ref=e33]:
+              - heading "Journey Through Life's Spectrum" [level=3] [ref=e34]:
+                - link "Journey Through Life's Spectrum" [ref=e35] [cursor=pointer]:
+                  - /url: /articles/journey-through-life-s-spectrum
+              - 'link "Read: Journey Through Life''s Spectrum" [ref=e36] [cursor=pointer]':
+                - /url: /articles/journey-through-life-s-spectrum
+                - img [ref=e37]
+          - region "Journeys through life's spectrum." [ref=e41]:
+            - generic [ref=e42]:
+              - paragraph [ref=e43]: The Journal
+              - heading "Journeys through life's spectrum." [level=2] [ref=e44]:
+                - text: Journeys through
+                - emphasis [ref=e45]: life's
+                - text: spectrum.
+              - paragraph [ref=e46]: A personal editorial blog — reflections, inspiration, and discovery across life's spectrum.
+            - generic [ref=e47]:
+              - link "Join Now" [ref=e48] [cursor=pointer]:
+                - /url: /about
+                - text: Join Now
+                - img [ref=e49]
+              - generic [ref=e51]:
+                - generic [ref=e52]: Follow
+                - list [ref=e53]:
+                  - listitem [ref=e54]:
+                    - link "Twitter (opens in a new tab)" [ref=e55] [cursor=pointer]:
+                      - /url: https://twitter.com
+                      - img [ref=e56]
+                  - listitem [ref=e58]:
+                    - link "Instagram (opens in a new tab)" [ref=e59] [cursor=pointer]:
+                      - /url: https://instagram.com
+                      - img [ref=e60]
+                  - listitem [ref=e62]:
+                    - link "GitHub (opens in a new tab)" [ref=e63] [cursor=pointer]:
+                      - /url: https://github.com
+                      - img [ref=e64]
+    - contentinfo [ref=e66]:
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - paragraph [ref=e70]: AshGray
+            - paragraph [ref=e71]: Journeys through life's spectrum
+            - list [ref=e73]:
+              - listitem [ref=e74]:
+                - link "Twitter (opens in a new tab)" [ref=e75] [cursor=pointer]:
+                  - /url: https://twitter.com
+                  - img [ref=e76]
+              - listitem [ref=e78]:
+                - link "Instagram (opens in a new tab)" [ref=e79] [cursor=pointer]:
+                  - /url: https://instagram.com
+                  - img [ref=e80]
+              - listitem [ref=e82]:
+                - link "GitHub (opens in a new tab)" [ref=e83] [cursor=pointer]:
+                  - /url: https://github.com
+                  - img [ref=e84]
+          - navigation "Footer navigation" [ref=e86]:
+            - list [ref=e87]:
+              - listitem [ref=e88]:
+                - link "Home" [ref=e89] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e90]:
+                - link "Articles" [ref=e91] [cursor=pointer]:
+                  - /url: /articles
+              - listitem [ref=e92]:
+                - link "Categories" [ref=e93] [cursor=pointer]:
+                  - /url: /categories
+              - listitem [ref=e94]:
+                - link "About" [ref=e95] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e96]:
+                - link "RSS" [ref=e97] [cursor=pointer]:
+                  - /url: /feed.xml
+                  - img [ref=e98]
+                  - text: RSS
+        - generic [ref=e102]:
+          - paragraph [ref=e103]: © 2026 AshGray
+          - paragraph [ref=e104]: A personal editorial blog — reflections, inspiration, and discovery across life's spectrum.
+  - alert [ref=e105]
