@@ -1,0 +1,36 @@
+# Single ignore file for the root build context (patterns relative to root).
+
+# Secrets & local env
+**/.env
+**/.env.*
+!**/.env.example
+
+# Node / frontend
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/build
+frontend/coverage
+frontend/.playwright-mcp
+**/*.log
+npm-debug.log*
+
+# Go / backend
+backend/bin/
+backend/server
+backend/migrate
+backend/seed
+backend/storage/uploads/
+**/*.test
+**/*.out
+
+# VCS & meta
+.git
+.gitignore
+**/.DS_Store
+**/*.pem
+
+# Repo assets not needed inside images
+/bento-*.png
+/.playwright-mcp
+/.mcp.json

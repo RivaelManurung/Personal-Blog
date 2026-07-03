@@ -30,7 +30,9 @@ services:
       - "${DB_PORT:-5432}:5432"
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      target: backend
     restart: unless-stopped
     depends_on:
       db:
@@ -66,7 +68,9 @@ services:
       - "${BACKEND_PORT:-8080}:8080"
 
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      target: frontend
     restart: unless-stopped
     depends_on:
       - backend
