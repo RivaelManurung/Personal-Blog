@@ -125,7 +125,9 @@ func (r *postRepository) List(ctx context.Context, f PostFilter) ([]models.Post,
 		base = base.Where("posts.status = ?", *f.Status)
 	}
 	if f.PublishedOnly {
-		base = base.Where(publishGateSQL)
+		// Public reads apply the publish gate and hide the reserved About page,
+		// which lives at /about and must not surface as a blog post.
+		base = base.Where(publishGateSQL).Where("posts.slug <> ?", models.AboutSlug)
 	}
 	if f.CategorySlug != "" {
 		base = base.Joins("JOIN categories ON categories.id = posts.category_id").
@@ -202,11 +204,12 @@ func (r *postRepository) Search(ctx context.Context, query string, page, limit i
 			ts_headline('english', posts.excerpt, websearch_to_tsquery('english', ?)) AS snippet
 		FROM posts
 		WHERE ` + publishGateSQL + `
+			AND posts.slug <> ?
 			AND posts.search_vector @@ websearch_to_tsquery('english', ?)
 		ORDER BY rank DESC
 		LIMIT ? OFFSET ?
 	`
-	if err := r.db.WithContext(ctx).Raw(sql, query, query, query, limit, offset).Scan(&rows).Error; err != nil {
+	if err := r.db.WithContext(ctx).Raw(sql, query, query, models.AboutSlug, query, limit, offset).Scan(&rows).Error; err != nil {
 		return nil, 0, fmt.Errorf("search posts: %w", err)
 	}
 
@@ -214,9 +217,10 @@ func (r *postRepository) Search(ctx context.Context, query string, page, limit i
 	countSQL := `
 		SELECT COUNT(*) FROM posts
 		WHERE ` + publishGateSQL + `
+			AND posts.slug <> ?
 			AND posts.search_vector @@ websearch_to_tsquery('english', ?)
 	`
-	if err := r.db.WithContext(ctx).Raw(countSQL, query).Scan(&total).Error; err != nil {
+	if err := r.db.WithContext(ctx).Raw(countSQL, models.AboutSlug, query).Scan(&total).Error; err != nil {
 		return nil, 0, fmt.Errorf("count search posts: %w", err)
 	}
 

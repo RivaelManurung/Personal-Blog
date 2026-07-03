@@ -11,6 +11,12 @@ const (
 	StatusPublished PostStatus = "published"
 )
 
+// AboutSlug is the reserved slug for the standalone About page. It is stored as
+// a post so it stays editable from the admin dashboard, but is excluded from all
+// public post listings (articles list, search, sitemap, feed) so it does not
+// appear as a blog post — it lives only at /about.
+const AboutSlug = "about"
+
 // Post represents a single blog article.
 type Post struct {
 	ID             int64      `gorm:"primaryKey"`

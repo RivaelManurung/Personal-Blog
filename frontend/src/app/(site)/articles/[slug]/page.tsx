@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Clock } from "lucide-react";
 import { getPost, getPosts } from "@/lib/api/posts";
 import { mediaSrc } from "@/lib/media";
@@ -29,8 +29,12 @@ export async function generateStaticParams() {
   return items.map((post) => ({ slug: post.slug }));
 }
 
+// The About page is standalone at /about; keep it out of the article route.
+const ABOUT_SLUG = "about";
+
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
+  if (slug === ABOUT_SLUG) redirect("/about");
   const post = await getPost(slug);
   if (!post) return { title: "Article not found" };
 
@@ -64,6 +68,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
+  if (slug === ABOUT_SLUG) redirect("/about");
   const post = await getPost(slug);
   if (!post) notFound();
 

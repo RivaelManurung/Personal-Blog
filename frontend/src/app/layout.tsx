@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { SITE } from "@/lib/config/site";
 import { Providers } from "@/components/providers";
+import { themeInitScript } from "@/components/theme-provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -42,6 +43,9 @@ export default function RootLayout({
       className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full">
+        {/* Applies the stored theme before paint (no flash). Server-rendered,
+            so React never re-renders it on the client. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Providers>{children}</Providers>
       </body>
     </html>
