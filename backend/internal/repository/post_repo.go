@@ -124,10 +124,12 @@ func (r *postRepository) List(ctx context.Context, f PostFilter) ([]models.Post,
 	if f.Status != nil {
 		base = base.Where("posts.status = ?", *f.Status)
 	}
+	// The reserved About page is managed at /admin/about and served at /about; it
+	// never appears in any post listing — public (articles, sitemap, feed) or
+	// admin (the Posts table).
+	base = base.Where("posts.slug <> ?", models.AboutSlug)
 	if f.PublishedOnly {
-		// Public reads apply the publish gate and hide the reserved About page,
-		// which lives at /about and must not surface as a blog post.
-		base = base.Where(publishGateSQL).Where("posts.slug <> ?", models.AboutSlug)
+		base = base.Where(publishGateSQL)
 	}
 	if f.CategorySlug != "" {
 		base = base.Joins("JOIN categories ON categories.id = posts.category_id").

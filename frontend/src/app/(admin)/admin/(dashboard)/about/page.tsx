@@ -1,21 +1,22 @@
-import { redirect } from "next/navigation";
-import { getPost } from "@/lib/api/posts";
-import { listPosts } from "@/lib/admin/api";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getPost as getPublicPost } from "@/lib/api/posts";
+import { getPost as getAdminPost } from "@/lib/admin/api";
+import { AboutEditor } from "@/features/posts/components/AboutEditor";
 
+export const metadata: Metadata = { title: "About page" };
 export const revalidate = 0;
 
-export default async function AdminAboutRedirectPage() {
-  const publicPost = await getPost("about");
-  if (publicPost) {
-    redirect(`/admin/posts/${publicPost.id}/edit`);
-  }
+/**
+ * Dedicated editor for the standalone About page. The About content is stored
+ * under the reserved "about" slug (seeded and always published), so we resolve
+ * its id via the public by-slug endpoint, then load the full admin detail to
+ * edit. It is intentionally NOT reachable through the Posts list.
+ */
+export default async function AdminAboutPage() {
+  const published = await getPublicPost("about");
+  if (!published) notFound();
 
-  // Fallback to admin list if it's currently in draft status
-  const { items } = await listPosts({ limit: 50 });
-  const aboutPost = items.find((p) => p.slug === "about");
-  if (aboutPost) {
-    redirect(`/admin/posts/${aboutPost.id}/edit`);
-  }
-
-  redirect("/admin/posts/new?slug=about&title=About");
+  const post = await getAdminPost(published.id);
+  return <AboutEditor post={post} />;
 }
