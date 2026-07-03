@@ -23,16 +23,22 @@ func EnsureAdmin(ctx context.Context, admins repository.AdminRepository, email, 
 		return err
 	}
 
-	hash, err := HashPassword(password)
+	admin, err := buildAdmin(email, password)
 	if err != nil {
 		return err
 	}
-	admin := &models.AdminUser{
-		Email:        email,
-		PasswordHash: hash,
-		DisplayName:  deriveDisplayName(email),
-	}
 	return admins.Upsert(ctx, admin)
+}
+
+// EnsureAboutPageForAdmin looks up the admin by email and creates the default
+// About page authored by them. It is a no-op if the page already exists, and
+// surfaces the lookup error instead of silently skipping.
+func EnsureAboutPageForAdmin(ctx context.Context, admins repository.AdminRepository, posts repository.PostRepository, email string) error {
+	admin, err := admins.FindByEmail(ctx, email)
+	if err != nil {
+		return fmt.Errorf("look up admin %q: %w", email, err)
+	}
+	return EnsureAboutPage(ctx, posts, admin.ID)
 }
 
 // EnsureAboutPage creates the default About page if no post with slug "about" exists.
@@ -65,15 +71,25 @@ func ResetAdminPassword(ctx context.Context, admins repository.AdminRepository, 
 	if email == "" || password == "" {
 		return fmt.Errorf("admin email and password are required")
 	}
-	hash, err := HashPassword(password)
+	admin, err := buildAdmin(email, password)
 	if err != nil {
 		return err
 	}
-	return admins.Upsert(ctx, &models.AdminUser{
+	return admins.Upsert(ctx, admin)
+}
+
+// buildAdmin hashes the password and assembles an AdminUser with a display
+// name derived from the email local-part.
+func buildAdmin(email, password string) (*models.AdminUser, error) {
+	hash, err := HashPassword(password)
+	if err != nil {
+		return nil, err
+	}
+	return &models.AdminUser{
 		Email:        email,
 		PasswordHash: hash,
 		DisplayName:  deriveDisplayName(email),
-	})
+	}, nil
 }
 
 func deriveDisplayName(email string) string {

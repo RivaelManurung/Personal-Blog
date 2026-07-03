@@ -24,18 +24,17 @@ func main() {
 		log.Fatalf("database error: %v", err)
 	}
 
+	ctx := context.Background()
 	admins := repository.NewAdminRepository(db)
-	if err := service.ResetAdminPassword(context.Background(), admins, cfg.AdminEmail, cfg.AdminPassword); err != nil {
-		log.Fatalf("seed error: %v", err)
+	posts := repository.NewPostRepository(db)
+
+	if err := service.ResetAdminPassword(ctx, admins, cfg.AdminEmail, cfg.AdminPassword); err != nil {
+		log.Fatalf("seed admin: %v", err)
 	}
 	log.Printf("seeded admin: %s", cfg.AdminEmail)
 
-	posts := repository.NewPostRepository(db)
-	if admin, err := admins.FindByEmail(context.Background(), cfg.AdminEmail); err == nil {
-		if err := service.EnsureAboutPage(context.Background(), posts, admin.ID); err != nil {
-			log.Printf("seed about error: %v", err)
-		} else {
-			log.Printf("seeded about page")
-		}
+	if err := service.EnsureAboutPageForAdmin(ctx, admins, posts, cfg.AdminEmail); err != nil {
+		log.Fatalf("seed about page: %v", err)
 	}
+	log.Printf("seeded about page")
 }

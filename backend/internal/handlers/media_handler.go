@@ -20,8 +20,8 @@ func NewMediaHandler(repo repository.MediaRepository, svc *service.MediaService)
 }
 
 func (h *MediaHandler) GetByID(c *fiber.Ctx) error {
-	id, ok2 := paramID(c)
-	if !ok2 {
+	id, valid := paramID(c)
+	if !valid {
 		return fail(c, fiber.StatusBadRequest, "invalid id")
 	}
 	m, err := h.repo.FindByID(c.Context(), id)
@@ -67,8 +67,8 @@ func (h *MediaHandler) Upload(c *fiber.Ctx) error {
 }
 
 func (h *MediaHandler) Delete(c *fiber.Ctx) error {
-	id, ok2 := paramID(c)
-	if !ok2 {
+	id, valid := paramID(c)
+	if !valid {
 		return fail(c, fiber.StatusBadRequest, "invalid id")
 	}
 	deleted, err := h.svc.Delete(c.Context(), id)

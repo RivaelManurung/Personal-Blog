@@ -1,9 +1,12 @@
 # Environment
 .env
 
-# Build output
+# Build output (compiled binaries at the package root — anchored with a
+# leading slash so they do not also match the cmd/server source directory).
 /bin/
-server
+/server
+/migrate
+/seed
 
 # Uploaded media (local storage driver)
 /storage/uploads/

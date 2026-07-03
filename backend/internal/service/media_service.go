@@ -47,8 +47,8 @@ const blurThumbWidth = 16
 // storageDriver abstracts where uploaded file bytes are persisted, so a
 // future S3/Supabase driver can slot in behind the same interface.
 type storageDriver interface {
-	Save(filename string, content []byte) error
-	Delete(filename string) error
+	Save(ctx context.Context, filename string, content []byte) error
+	Delete(ctx context.Context, filename string) error
 	PublicURL(filename string) string
 }
 
@@ -61,7 +61,7 @@ func newLocalDriver(basePath string) *localDriver {
 	return &localDriver{basePath: basePath}
 }
 
-func (d *localDriver) Save(filename string, content []byte) error {
+func (d *localDriver) Save(_ context.Context, filename string, content []byte) error {
 	if err := os.MkdirAll(d.basePath, 0o755); err != nil {
 		return fmt.Errorf("create storage dir: %w", err)
 	}
@@ -69,7 +69,7 @@ func (d *localDriver) Save(filename string, content []byte) error {
 	return os.WriteFile(path, content, 0o644)
 }
 
-func (d *localDriver) Delete(filename string) error {
+func (d *localDriver) Delete(_ context.Context, filename string) error {
 	path := filepath.Join(d.basePath, filename)
 	return os.Remove(path)
 }
@@ -95,9 +95,9 @@ func newSupabaseDriver(url, key, bucket string) *supabaseDriver {
 	}
 }
 
-func (d *supabaseDriver) Save(filename string, content []byte) error {
+func (d *supabaseDriver) Save(ctx context.Context, filename string, content []byte) error {
 	endpoint := fmt.Sprintf("%s/storage/v1/object/%s/%s", d.url, d.bucket, filename)
-	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(content))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(content))
 	if err != nil {
 		return fmt.Errorf("create supabase upload request: %w", err)
 	}
@@ -121,9 +121,9 @@ func (d *supabaseDriver) Save(filename string, content []byte) error {
 	return nil
 }
 
-func (d *supabaseDriver) Delete(filename string) error {
+func (d *supabaseDriver) Delete(ctx context.Context, filename string) error {
 	endpoint := fmt.Sprintf("%s/storage/v1/object/%s/%s", d.url, d.bucket, filename)
-	req, err := http.NewRequest(http.MethodDelete, endpoint, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, endpoint, nil)
 	if err != nil {
 		return fmt.Errorf("create supabase delete request: %w", err)
 	}
@@ -211,7 +211,7 @@ func (s *MediaService) Save(ctx context.Context, fh *multipart.FileHeader, altTe
 	sum := sha256.Sum256(content)
 	filename := hex.EncodeToString(sum[:])[:16] + ext
 
-	if err := s.driver.Save(filename, content); err != nil {
+	if err := s.driver.Save(ctx, filename, content); err != nil {
 		return nil, fmt.Errorf("save file: %w", err)
 	}
 
@@ -230,7 +230,7 @@ func (s *MediaService) Save(ctx context.Context, fh *multipart.FileHeader, altTe
 	}
 
 	if err := s.repo.Create(ctx, media); err != nil {
-		_ = s.driver.Delete(filename)
+		_ = s.driver.Delete(ctx, filename)
 		return nil, err
 	}
 
@@ -252,7 +252,7 @@ func (s *MediaService) Delete(ctx context.Context, id int64) (bool, error) {
 		return false, err
 	}
 	if ok {
-		_ = s.driver.Delete(m.Filename)
+		_ = s.driver.Delete(ctx, m.Filename)
 	}
 	return ok, nil
 }
