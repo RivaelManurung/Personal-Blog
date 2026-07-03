@@ -1,6 +1,6 @@
 /** Public, non-secret site configuration. */
 export const SITE = {
-  name: "AshGray",
+  name: "Rivael Manurung",
   tagline: "Journeys through life's spectrum",
   description:
     "A personal editorial blog — reflections, inspiration, and discovery across life's spectrum.",
