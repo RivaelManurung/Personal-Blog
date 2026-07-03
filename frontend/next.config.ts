@@ -52,6 +52,14 @@ const nextConfig: NextConfig = {
         port: port || undefined,
         pathname: "/uploads/**",
       },
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "**.supabase.in",
+      },
     ],
   },
   async headers() {

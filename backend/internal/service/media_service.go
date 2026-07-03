@@ -17,6 +17,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/rivael/blog-backend/internal/config"
 	"github.com/rivael/blog-backend/internal/models"
@@ -44,10 +45,11 @@ var allowedMimeTypes = map[string]string{
 const blurThumbWidth = 16
 
 // storageDriver abstracts where uploaded file bytes are persisted, so a
-// future S3 driver can slot in behind the same interface.
+// future S3/Supabase driver can slot in behind the same interface.
 type storageDriver interface {
 	Save(filename string, content []byte) error
 	Delete(filename string) error
+	PublicURL(filename string) string
 }
 
 // localDriver stores files on the local filesystem under a base path.
@@ -72,6 +74,79 @@ func (d *localDriver) Delete(filename string) error {
 	return os.Remove(path)
 }
 
+func (d *localDriver) PublicURL(filename string) string {
+	return "/uploads/" + filename
+}
+
+// supabaseDriver stores files in Supabase Storage via its REST API.
+type supabaseDriver struct {
+	url    string
+	key    string
+	bucket string
+	client *http.Client
+}
+
+func newSupabaseDriver(url, key, bucket string) *supabaseDriver {
+	return &supabaseDriver{
+		url:    strings.TrimRight(url, "/"),
+		key:    key,
+		bucket: bucket,
+		client: &http.Client{Timeout: 30 * time.Second},
+	}
+}
+
+func (d *supabaseDriver) Save(filename string, content []byte) error {
+	endpoint := fmt.Sprintf("%s/storage/v1/object/%s/%s", d.url, d.bucket, filename)
+	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(content))
+	if err != nil {
+		return fmt.Errorf("create supabase upload request: %w", err)
+	}
+
+	mimeType := http.DetectContentType(content)
+	req.Header.Set("Authorization", "Bearer "+d.key)
+	req.Header.Set("apikey", d.key)
+	req.Header.Set("Content-Type", mimeType)
+	req.Header.Set("x-upsert", "true")
+
+	resp, err := d.client.Do(req)
+	if err != nil {
+		return fmt.Errorf("supabase upload request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("supabase upload failed with status %d: %s", resp.StatusCode, string(body))
+	}
+	return nil
+}
+
+func (d *supabaseDriver) Delete(filename string) error {
+	endpoint := fmt.Sprintf("%s/storage/v1/object/%s/%s", d.url, d.bucket, filename)
+	req, err := http.NewRequest(http.MethodDelete, endpoint, nil)
+	if err != nil {
+		return fmt.Errorf("create supabase delete request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+d.key)
+	req.Header.Set("apikey", d.key)
+
+	resp, err := d.client.Do(req)
+	if err != nil {
+		return fmt.Errorf("supabase delete request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || (resp.StatusCode >= 300 && resp.StatusCode != http.StatusNotFound) {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("supabase delete failed with status %d: %s", resp.StatusCode, string(body))
+	}
+	return nil
+}
+
+func (d *supabaseDriver) PublicURL(filename string) string {
+	return fmt.Sprintf("%s/storage/v1/object/public/%s/%s", d.url, d.bucket, filename)
+}
+
 // MediaService implements upload validation, storage, and metadata
 // persistence for media assets.
 type MediaService struct {
@@ -80,13 +155,20 @@ type MediaService struct {
 	driver storageDriver
 }
 
-// NewMediaService constructs a MediaService using the local filesystem
-// storage driver (cfg.StoragePath).
+// NewMediaService constructs a MediaService using the configured storage driver
+// ("local" or "supabase").
 func NewMediaService(repo repository.MediaRepository, cfg *config.Config) *MediaService {
+	var driver storageDriver
+	switch strings.ToLower(cfg.StorageDriver) {
+	case "supabase":
+		driver = newSupabaseDriver(cfg.SupabaseURL, cfg.SupabaseKey, cfg.SupabaseBucket)
+	default:
+		driver = newLocalDriver(cfg.StoragePath)
+	}
 	return &MediaService{
 		repo:   repo,
 		cfg:    cfg,
-		driver: newLocalDriver(cfg.StoragePath),
+		driver: driver,
 	}
 }
 
@@ -144,7 +226,7 @@ func (s *MediaService) Save(ctx context.Context, fh *multipart.FileHeader, altTe
 		Height:       height,
 		BlurDataURL:  blurDataURL,
 		AltText:      altText,
-		URL:          "/uploads/" + filename,
+		URL:          s.driver.PublicURL(filename),
 	}
 
 	if err := s.repo.Create(ctx, media); err != nil {

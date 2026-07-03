@@ -25,9 +25,12 @@ type Config struct {
 	AdminPassword   string
 
 	// Media storage
-	StorageDriver string // "local" | "s3"
-	StoragePath   string
-	MediaMaxBytes int64
+	StorageDriver  string // "local" | "s3" | "supabase"
+	StoragePath    string
+	MediaMaxBytes  int64
+	SupabaseURL    string
+	SupabaseKey    string
+	SupabaseBucket string
 
 	// Public URLs & cache revalidation webhook
 	PublicBaseURL    string
@@ -61,9 +64,12 @@ func Load() (*Config, error) {
 		AdminEmail:      getEnv("ADMIN_EMAIL", "admin@example.com"),
 		AdminPassword:   os.Getenv("ADMIN_PASSWORD"),
 
-		StorageDriver: getEnv("STORAGE_DRIVER", "local"),
-		StoragePath:   getEnv("STORAGE_PATH", "storage/uploads"),
-		MediaMaxBytes: getEnvInt64("MEDIA_MAX_BYTES", 5<<20), // 5 MiB
+		StorageDriver:  getEnv("STORAGE_DRIVER", "local"),
+		StoragePath:    getEnv("STORAGE_PATH", "storage/uploads"),
+		MediaMaxBytes:  getEnvInt64("MEDIA_MAX_BYTES", 5<<20), // 5 MiB
+		SupabaseURL:    strings.TrimRight(os.Getenv("SUPABASE_URL"), "/"),
+		SupabaseKey:    os.Getenv("SUPABASE_KEY"),
+		SupabaseBucket: getEnv("SUPABASE_BUCKET", "blog-media"),
 
 		PublicBaseURL:    getEnv("PUBLIC_BASE_URL", "http://localhost:3000"),
 		RevalidateURL:    os.Getenv("REVALIDATE_URL"),
@@ -76,6 +82,12 @@ func Load() (*Config, error) {
 
 	if cfg.DatabaseURL == "" {
 		return nil, fmt.Errorf("DATABASE_URL is required")
+	}
+
+	if strings.ToLower(cfg.StorageDriver) == "supabase" {
+		if cfg.SupabaseURL == "" || cfg.SupabaseKey == "" {
+			return nil, fmt.Errorf("SUPABASE_URL and SUPABASE_KEY are required when STORAGE_DRIVER=supabase")
+		}
 	}
 
 	// Fail fast on invalid numeric bounds rather than silently booting with a
