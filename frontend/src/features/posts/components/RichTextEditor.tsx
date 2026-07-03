@@ -6,6 +6,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
+import { TableKit } from "@tiptap/extension-table";
 import {
   Bold,
   Italic,
@@ -19,6 +20,7 @@ import {
   Link2,
   Link2Off,
   ImageIcon,
+  Table as TableIcon,
   Loader2,
   Undo2,
   Redo2,
@@ -58,11 +60,20 @@ export function RichTextEditor({ value, onChange, placeholder, ref }: RichTextEd
       Link.configure({ openOnClick: false, autolink: true, HTMLAttributes: { rel: "noopener noreferrer" } }),
       Image.configure({ inline: false, HTMLAttributes: { class: "rounded-lg max-h-[500px] w-auto my-4 border border-border shadow-sm object-cover mx-auto" } }),
       Placeholder.configure({ placeholder: placeholder ?? "Write your story…" }),
+      // Tables (bundles Table + Row + Header + Cell). Lets imported Markdown
+      // tables survive and be edited instead of being stripped.
+      TableKit.configure({ table: { resizable: true } }),
     ],
     content: value || "",
     editorProps: {
       attributes: {
-        class: "prose prose-sm max-w-none min-h-[320px] px-4 py-3 focus:outline-none",
+        class: cn(
+          "prose prose-sm max-w-none min-h-[320px] px-4 py-3 focus:outline-none",
+          // Visible table borders while editing (the typography plugin is not installed).
+          "[&_table]:w-full [&_table]:border-collapse [&_table]:my-4",
+          "[&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-2 [&_th]:py-1 [&_th]:text-left",
+          "[&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1",
+        ),
       },
     },
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -198,6 +209,15 @@ export function RichTextEditor({ value, onChange, placeholder, ref }: RichTextEd
             if (file) void handleImageFile(file, e.target);
           }}
         />
+        <ToolbarButton
+          label="Insert table"
+          active={editor.isActive("table")}
+          onClick={() =>
+            editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+          }
+        >
+          <TableIcon className="size-4" />
+        </ToolbarButton>
         <Separator orientation="vertical" className="mx-1 h-5" />
         <ToolbarButton
           label="Undo"

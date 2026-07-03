@@ -37,7 +37,7 @@ export function Prose({ html, className }: ProseProps) {
         "[&_img]:my-8 [&_img]:rounded-2xl [&_img]:w-full [&_img]:h-auto",
         "[&_hr]:my-12 [&_hr]:border-border",
         "[&_figure]:my-8 [&_figcaption]:mt-2 [&_figcaption]:text-center [&_figcaption]:text-sm [&_figcaption]:text-muted-foreground",
-        "[&_table]:my-6 [&_table]:w-full [&_table]:text-sm [&_th]:border-b [&_th]:border-border [&_th]:py-2 [&_th]:text-left [&_td]:border-b [&_td]:border-border [&_td]:py-2",
+        "[&_table]:my-6 [&_table]:w-full [&_table]:text-sm [&_th]:border-b [&_th]:border-border [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_td]:border-b [&_td]:border-border [&_td]:px-3 [&_td]:py-2",
         className,
       )}
       // Sanitized via DOMPurify at the call boundary (defense-in-depth).
