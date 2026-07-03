@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
-const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8080";
+// `||` (not `??`) so an empty env var — e.g. an unset CI build-arg that arrives
+// as "" rather than undefined — also falls back instead of crashing `new URL()`.
+const backendUrl = process.env.BACKEND_URL || "http://localhost:8080";
 const { hostname, protocol, port } = new URL(backendUrl);
 
 // The media/API host derived from BACKEND_URL, e.g. "http://localhost:8080".

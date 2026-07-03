@@ -4,7 +4,9 @@ export const SITE = {
   tagline: "Journeys through life's spectrum",
   description:
     "A personal editorial blog — reflections, inspiration, and discovery across life's spectrum.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  // `||` (not `??`) so an empty env var (e.g. an unset CI build-arg -> "") also
+  // falls back, instead of producing "" and crashing `new URL(SITE.url)`.
+  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   nav: [
     { label: "Home", href: "/" },
     { label: "Articles", href: "/articles" },
@@ -20,8 +22,8 @@ export const SITE = {
 
 /** Server-only base URL for the Go API (never exposed to the client bundle). */
 export const API_BASE_URL =
-  (process.env.BACKEND_URL ?? "http://localhost:8080") + "/api/v1";
+  (process.env.BACKEND_URL || "http://localhost:8080") + "/api/v1";
 
 /** Public origin of the Go backend, used to resolve media URLs in the browser. */
 export const MEDIA_ORIGIN =
-  process.env.NEXT_PUBLIC_MEDIA_ORIGIN ?? "http://localhost:8080";
+  process.env.NEXT_PUBLIC_MEDIA_ORIGIN || "http://localhost:8080";

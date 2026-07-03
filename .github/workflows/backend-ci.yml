@@ -67,10 +67,13 @@ jobs:
         run: go build ./...
 
       - name: Lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          working-directory: backend
+        # Install golangci-lint via `go install` so it is compiled with the
+        # same (bleeding-edge) Go toolchain as the module. The prebuilt binary
+        # shipped by golangci-lint-action lags new Go releases and fails to parse
+        # a go 1.26 module.
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
+          "$(go env GOPATH)/bin/golangci-lint" run ./...
 
       - name: Apply migrations
         run: go run ./cmd/migrate up

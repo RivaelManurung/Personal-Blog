@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 export type Theme = "light" | "dark";
 
@@ -30,14 +24,16 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
  */
 export const themeInitScript = `(function(){try{var t=localStorage.getItem("${STORAGE_KEY}");if(t!=="dark"&&t!=="light"){t="${DEFAULT_THEME}";}var d=document.documentElement;d.classList.toggle("dark",t==="dark");d.style.colorScheme=t;}catch(e){}})();`;
 
-function readStoredTheme(): Theme {
-  if (typeof window === "undefined") return DEFAULT_THEME;
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored === "dark" || stored === "light" ? stored : DEFAULT_THEME;
-  } catch {
-    return DEFAULT_THEME;
-  }
+/**
+ * The initial theme, read from the <html> class that the inline script already
+ * applied before hydration. On the server `document` is undefined, so we fall
+ * back to the default — which matches the server-rendered markup (no dark class).
+ * Reading it as a lazy initializer (not in an effect) keeps state and the DOM in
+ * sync from the first client render without a setState-in-effect.
+ */
+function initialTheme(): Theme {
+  if (typeof document === "undefined") return DEFAULT_THEME;
+  return document.documentElement.classList.contains("dark") ? "dark" : DEFAULT_THEME;
 }
 
 function applyTheme(theme: Theme) {
@@ -47,16 +43,11 @@ function applyTheme(theme: Theme) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // SSR renders with the default; the init script has already applied the stored
-  // theme to <html> before hydration, so there is no flash. Sync React state to
-  // the stored value on mount.
-  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
+  // Seed from the DOM (already themed by the inline script) — no flash, no
+  // setState-in-effect.
+  const [theme, setThemeState] = useState<Theme>(initialTheme);
 
-  useEffect(() => {
-    setThemeState(readStoredTheme());
-  }, []);
-
-  // Keep the <html> class/colorScheme in sync with state (mount sync + toggles).
+  // Keep the <html> class/colorScheme in sync whenever the theme changes.
   useEffect(() => {
     applyTheme(theme);
   }, [theme]);
