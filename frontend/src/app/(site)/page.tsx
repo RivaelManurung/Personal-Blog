@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { getFeaturedPosts } from "@/lib/api/posts";
 import { Container } from "@/components/site/Container";
 import { BentoGrid } from "@/components/bento/BentoGrid";
-import { JoinNowButton } from "@/components/site/JoinNowButton";
 import { BentoSkeleton } from "@/components/site/Skeletons";
 import { SITE } from "@/lib/config/site";
 
@@ -45,7 +44,12 @@ function EmptyHome() {
         archive.
       </p>
       <div className="mt-8 flex items-center justify-center gap-3">
-        <JoinNowButton label="Explore" href="/articles" />
+        <Link
+          href="/articles"
+          className="rounded-full bg-foreground px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-background transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Explore
+        </Link>
         <Link
           href="/about"
           className="rounded-full px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-foreground ring-1 ring-border transition hover:bg-surface-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

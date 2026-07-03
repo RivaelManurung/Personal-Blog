@@ -29,4 +29,13 @@ func main() {
 		log.Fatalf("seed error: %v", err)
 	}
 	log.Printf("seeded admin: %s", cfg.AdminEmail)
+
+	posts := repository.NewPostRepository(db)
+	if admin, err := admins.FindByEmail(context.Background(), cfg.AdminEmail); err == nil {
+		if err := service.EnsureAboutPage(context.Background(), posts, admin.ID); err != nil {
+			log.Printf("seed about error: %v", err)
+		} else {
+			log.Printf("seeded about page")
+		}
+	}
 }

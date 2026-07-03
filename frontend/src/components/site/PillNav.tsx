@@ -7,7 +7,6 @@ import { Menu, MoveUpRight, X } from "lucide-react";
 import { SITE } from "@/lib/config/site";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/site/ThemeToggle";
-import { JoinNowButton } from "@/components/site/JoinNowButton";
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -70,9 +69,8 @@ export function PillNav() {
         </ul>
       </nav>
 
-      {/* Right zone: CTA + theme toggle + mobile menu */}
+      {/* Right zone: theme toggle + mobile menu */}
       <div className="flex items-center gap-2">
-        <JoinNowButton className="hidden px-5 py-2.5 sm:inline-flex" />
         <ThemeToggle />
 
         <button

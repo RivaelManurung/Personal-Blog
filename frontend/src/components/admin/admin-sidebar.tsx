@@ -8,6 +8,7 @@ import {
   Tags,
   Settings,
   PenLine,
+  BookOpen,
 } from "lucide-react";
 import {
   Sidebar,
@@ -29,6 +30,7 @@ import type { Admin } from "@/types/api";
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/posts", label: "Posts", icon: FileText, exact: false },
+  { href: "/admin/about", label: "About Page", icon: BookOpen, exact: false },
   { href: "/admin/taxonomy", label: "Taxonomy", icon: Tags, exact: false },
   { href: "/admin/settings", label: "Settings", icon: Settings, exact: false },
 ] as const;

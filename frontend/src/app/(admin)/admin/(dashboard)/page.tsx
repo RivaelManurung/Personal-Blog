@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { FileText, CheckCircle2, PenLine, CalendarClock, Plus, ArrowUpRight } from "lucide-react";
+import { FileText, CheckCircle2, PenLine, CalendarClock, Plus, ArrowUpRight, BookOpen } from "lucide-react";
 import { getStats, listPosts } from "@/lib/admin/api";
 import { formatDate } from "@/lib/format/date";
 import { Button } from "@/components/ui/button";
@@ -37,12 +37,20 @@ export default async function DashboardPage() {
             A pulse on your library — what is live, drafted, and queued.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/admin/posts/new">
-            <Plus className="size-4" />
-            New post
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/admin/about">
+              <BookOpen className="size-4" />
+              Edit About Page
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/admin/posts/new">
+              <Plus className="size-4" />
+              New post
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">

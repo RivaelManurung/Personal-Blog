@@ -1,10 +1,9 @@
 import { SITE } from "@/lib/config/site";
-import { JoinNowButton } from "@/components/site/JoinNowButton";
 import { SocialIcons } from "@/components/site/SocialIcons";
 
 /**
  * Right-column intro per the reference: plain text on the canvas (no card
- * background) — a short welcome, a compact dark CTA, and circular socials.
+ * background) — a short welcome and circular socials.
  */
 export function IntroPanel() {
   return (
@@ -20,7 +19,6 @@ export function IntroPanel() {
       </div>
 
       <div className="flex flex-col items-start gap-5">
-        <JoinNowButton className="px-5 py-2.5" />
         <SocialIcons />
       </div>
     </section>
