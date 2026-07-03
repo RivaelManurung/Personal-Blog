@@ -15,7 +15,7 @@ export function Pagination({ page, totalPages }: PaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  if (totalPages <= 1) return null;
+  if (totalPages < 1) return null;
 
   const hrefFor = (target: number): string => {
     const params = new URLSearchParams(searchParams?.toString());

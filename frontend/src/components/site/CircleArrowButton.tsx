@@ -34,14 +34,14 @@ export function CircleArrowButton({
           ? "bg-accent text-accent-foreground shadow-sm"
           : "bg-background/90 text-foreground shadow-sm ring-1 ring-border backdrop-blur",
         "transition duration-300 ease-[var(--ease-out-expo)]",
-        "hover:bg-foreground hover:text-background hover:scale-105",
+        "hover:bg-foreground hover:text-background hover:scale-105 group-hover:bg-foreground group-hover:text-background group-hover:scale-105",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         dims,
         className,
       )}
     >
       <ArrowUpRight
-        className="size-5 transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover/arrow:-translate-y-0.5 group-hover/arrow:translate-x-0.5"
+        className="size-5 transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover/arrow:-translate-y-0.5 group-hover/arrow:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
         aria-hidden="true"
       />
     </Link>

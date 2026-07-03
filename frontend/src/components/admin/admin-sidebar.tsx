@@ -44,10 +44,10 @@ export function AdminSidebar({ admin }: { admin: Admin }) {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
-      <SidebarHeader className="border-b border-sidebar-border">
+      <SidebarHeader className="h-14 justify-center border-b border-sidebar-border px-2 py-0">
         <Link
           href="/admin"
-          className="flex items-center gap-2.5 px-1.5 py-1.5 group-data-[collapsible=icon]:justify-center"
+          className="flex items-center gap-2.5 px-1.5 py-1 group-data-[collapsible=icon]:justify-center"
         >
           <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground">
             <PenLine className="size-4" />

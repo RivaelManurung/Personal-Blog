@@ -7,7 +7,7 @@ import { SocialIcons } from "@/components/site/SocialIcons";
  */
 export function IntroPanel() {
   return (
-    <section aria-labelledby="intro-heading" className="flex flex-col gap-6 px-1 py-2 sm:px-2">
+    <section aria-labelledby="intro-heading" className="animate-fade-up flex flex-col gap-6 px-1 py-2 sm:px-2">
       <div>
         <h2
           id="intro-heading"

@@ -180,6 +180,59 @@
   }
 }
 
+@keyframes fade-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@utility animate-fade-up {
+  animation: fade-slide-up 0.8s var(--ease-out-expo) both;
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.6s var(--ease-soft) both;
+}
+
+@utility delay-75 {
+  animation-delay: 75ms;
+  transition-delay: 75ms;
+}
+
+@utility delay-100 {
+  animation-delay: 100ms;
+  transition-delay: 100ms;
+}
+
+@utility delay-150 {
+  animation-delay: 150ms;
+  transition-delay: 150ms;
+}
+
+@utility delay-200 {
+  animation-delay: 200ms;
+  transition-delay: 200ms;
+}
+
+@utility delay-300 {
+  animation-delay: 300ms;
+  transition-delay: 300ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

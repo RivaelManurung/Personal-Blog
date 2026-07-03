@@ -21,7 +21,7 @@ interface ArticleCardProps {
 }
 
 const ASPECT: Record<Variant, string> = {
-  hero: "aspect-[4/5] sm:aspect-[16/12]",
+  hero: "aspect-[4/5] sm:aspect-[16/12] lg:aspect-auto",
   stacked: "aspect-[4/4.4]",
   feature: "aspect-[4/4.4]",
 };
@@ -64,7 +64,8 @@ export function ArticleCard({
       {/* Clipped photo layer */}
       <div
         className={cn(
-          "absolute inset-0 overflow-hidden rounded-2xl bg-surface-sunken ring-1 ring-border",
+          "absolute inset-0 overflow-hidden bg-surface-sunken ring-1 ring-border",
+          variant === "hero" ? "rounded-3xl" : "rounded-2xl",
           "transition duration-500 ease-[var(--ease-out-expo)] group-hover:ring-foreground/20",
           "focus-within:ring-2 focus-within:ring-ring",
         )}
@@ -78,7 +79,7 @@ export function ArticleCard({
             sizes={IMAGE_SIZES[variant]}
             placeholder={post.coverImage?.blurDataURL ? "blur" : "empty"}
             blurDataURL={post.coverImage?.blurDataURL || undefined}
-            className="object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
+            className="object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"
           />
         ) : (
           <div
@@ -90,7 +91,7 @@ export function ArticleCard({
         {/* tinted + dark scrim for legibility */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/5"
+          className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/5 transition-opacity duration-700 ease-[var(--ease-out-expo)] group-hover:opacity-85"
         />
         <div
           aria-hidden="true"
@@ -98,7 +99,12 @@ export function ArticleCard({
         />
 
         {/* top row: category + date */}
-        <div className="absolute inset-x-4 top-4 flex items-start justify-between gap-2">
+        <div
+          className={cn(
+            "absolute flex items-start justify-between gap-2",
+            variant === "hero" ? "inset-x-5 top-5 sm:inset-x-6 sm:top-6" : "inset-x-4 top-4",
+          )}
+        >
           {post.category ? (
             <CategoryPill name={post.category.name} slug={post.category.slug} asLabel />
           ) : (
@@ -117,7 +123,10 @@ export function ArticleCard({
         {/* bottom-left title (kept clear of the notched arrow) */}
         <h3
           className={cn(
-            "absolute bottom-4 left-4 right-16 font-display text-white drop-shadow-sm",
+            "absolute font-display text-white drop-shadow-sm transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:-translate-y-1",
+            variant === "hero"
+              ? "bottom-5 left-5 right-20 sm:bottom-6 sm:left-6 sm:right-24"
+              : "bottom-4 left-4 right-16",
             TITLE_SIZE[variant],
           )}
         >

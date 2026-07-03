@@ -66,6 +66,9 @@ async function PostsGrid({ page }: { page: number }) {
                 post={post}
                 index={(page - 1) * PAGE_SIZE + i + 1}
                 variant="feature"
+                className={`animate-fade-up ${
+                  i === 0 ? "delay-75" : i === 1 ? "delay-150" : i === 2 ? "delay-200" : "delay-300"
+                }`}
               />
             ))}
           </div>

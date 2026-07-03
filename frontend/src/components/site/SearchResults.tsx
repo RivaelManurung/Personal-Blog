@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { searchPosts } from "@/lib/api/search";
+import { Pagination } from "@/components/site/Pagination";
 
 interface SearchResultsProps {
   q: string;
@@ -66,6 +67,7 @@ export async function SearchResults({ q, page = 1 }: SearchResultsProps) {
           </li>
         ))}
       </ul>
+      <Pagination page={meta.page} totalPages={meta.totalPages} />
     </div>
   );
 }
