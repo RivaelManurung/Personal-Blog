@@ -5,38 +5,22 @@
 #   IMAGE_TAG=latest docker compose -f docker-compose.prod.yml pull
 #   IMAGE_TAG=latest docker compose -f docker-compose.prod.yml up -d
 #
+# The database is Supabase Postgres (external) — there is NO local db container.
 # Put a .env file next to this compose on the VPS with the real secrets
-# (see .env.docker.example at the repo root). REGISTRY defaults to this repo's
-# GHCR namespace; override it if you host images elsewhere.
+# (see deploy/.env.production.example). REGISTRY defaults to this repo's GHCR
+# namespace; override it if you host images elsewhere.
 
 services:
-  db:
-    image: postgres:18
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-blog}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-blog}
-      POSTGRES_DB: ${POSTGRES_DB:-blog}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-blog} -d ${POSTGRES_DB:-blog}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   backend:
     image: ${REGISTRY:-ghcr.io/rivaelmanurung}/personal-blog-backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
       APP_ENV: production
       PORT: "8080"
       LOG_LEVEL: ${LOG_LEVEL:-info}
-      DATABASE_URL: postgres://${POSTGRES_USER:-blog}:${POSTGRES_PASSWORD:-blog}@db:5432/${POSTGRES_DB:-blog}?sslmode=disable
-      # REQUIRED in production — the ":?" form makes compose fail loudly if unset.
+      # Supabase Postgres via the session pooler. REQUIRED — ":?" fails loudly.
+      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL (Supabase pooler) in .env}
+      STATEMENT_TIMEOUT_MS: ${STATEMENT_TIMEOUT_MS:-10000}
       JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
       ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL:-15m}
       REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL:-168h}
@@ -46,8 +30,8 @@ services:
       STORAGE_DRIVER: ${STORAGE_DRIVER:-supabase}
       STORAGE_PATH: storage/uploads
       MEDIA_MAX_BYTES: ${MEDIA_MAX_BYTES:-5242880}
-      SUPABASE_URL: ${SUPABASE_URL:-}
-      SUPABASE_KEY: ${SUPABASE_KEY:-}
+      SUPABASE_URL: ${SUPABASE_URL:?set SUPABASE_URL in .env}
+      SUPABASE_KEY: ${SUPABASE_KEY:?set SUPABASE_KEY in .env}
       SUPABASE_BUCKET: ${SUPABASE_BUCKET:-PersonalBlog}
       # Public origin of the frontend as seen by browsers.
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:?set PUBLIC_BASE_URL in .env}
@@ -60,8 +44,8 @@ services:
       - uploads:/app/storage/uploads
     # Migrate up -> seed admin -> serve. migrate/seed are idempotent.
     command: ["sh", "-c", "/app/migrate up && /app/seed && /app/server"]
-    ports:
-      - "${BACKEND_PORT:-8080}:8080"
+    # No published ports: the backend is reachable only by the frontend over the
+    # internal Docker network (http://backend:8080). Media is served by Supabase.
 
   frontend:
     image: ${REGISTRY:-ghcr.io/rivaelmanurung}/personal-blog-frontend:${IMAGE_TAG:-latest}
@@ -72,17 +56,17 @@ services:
       NODE_ENV: production
       PORT: "3000"
       HOSTNAME: 0.0.0.0
-      # Server-only base URL of the Go backend (internal network name).
+      # Server-only base URL of the Go backend (internal Docker network name).
       BACKEND_URL: ${BACKEND_URL:-http://backend:8080}
       # NOTE: NEXT_PUBLIC_* are baked into the client bundle at build time (see
       # docker-publish.yml build-args). Setting them here only affects server-side
-      # reads; keep them consistent with the build-time values.
-      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
-      NEXT_PUBLIC_MEDIA_ORIGIN: ${NEXT_PUBLIC_MEDIA_ORIGIN:-http://localhost:8080}
+      # reads; keep them consistent with the build-time repo Variables.
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:?set NEXT_PUBLIC_SITE_URL in .env}
+      NEXT_PUBLIC_MEDIA_ORIGIN: ${NEXT_PUBLIC_MEDIA_ORIGIN:-https://sgtvblebakqdfjebspss.supabase.co}
       REVALIDATE_SECRET: ${REVALIDATE_SECRET:-change-me}
     ports:
+      # Exposed publicly; front it with the host nginx / a domain when ready.
       - "${FRONTEND_PORT:-3000}:3000"
 
 volumes:
-  pgdata:
   uploads:
