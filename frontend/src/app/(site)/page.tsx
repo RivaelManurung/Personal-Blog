@@ -11,7 +11,7 @@ export default async function HomePage() {
     <Container className="pb-12 pt-2 sm:pt-4">
       {/* The reference goes straight from header to bento; keep the h1 for a11y/SEO. */}
       <h1 id="home-heading" className="sr-only">
-        {SITE.name} — {SITE.tagline}
+        {SITE.name} — {SITE.brandName} (rivaelblog) — {SITE.tagline}
       </h1>
 
       <section aria-labelledby="home-heading">

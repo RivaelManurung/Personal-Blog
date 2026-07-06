@@ -94,7 +94,23 @@ func (f *fakePostRepository) Stats(ctx context.Context) (repository.PostStats, e
 	return repository.PostStats{}, nil
 }
 
+func (f *fakePostRepository) RecordView(ctx context.Context, postID int64) error {
+	if p, ok := f.posts[postID]; ok {
+		p.ViewCount++
+	}
+	return nil
+}
+
+func (f *fakePostRepository) GetViewStats(ctx context.Context, postID int64) (*models.PostViewStats, error) {
+	var total int64
+	if p, ok := f.posts[postID]; ok {
+		total = p.ViewCount
+	}
+	return &models.PostViewStats{PostID: postID, Total: total}, nil
+}
+
 var _ repository.PostRepository = (*fakePostRepository)(nil)
+
 
 // fakeTagRepository is an in-memory repository.TagRepository stub; ExistingIDs
 // simply echoes back whatever ids were requested (all "exist").

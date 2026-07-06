@@ -44,6 +44,7 @@ export interface PostSummary {
   readingTimeMin: number;
   publishedAt: string | null;
   index?: number;
+  viewCount?: number;
 }
 
 export interface PostDetail extends PostSummary {
@@ -66,6 +67,7 @@ export interface PostAdminSummary {
   category: Category | null;
   publishedAt: string | null;
   updatedAt: string;
+  viewCount?: number;
 }
 
 export interface SearchHit {
@@ -82,7 +84,26 @@ export interface Stats {
   published: number;
   drafts: number;
   scheduled: number;
+  totalViews?: number;
 }
+
+export interface DailyView {
+  date: string;
+  views: number;
+}
+
+export interface MonthlyView {
+  month: string;
+  views: number;
+}
+
+export interface PostViewStats {
+  postId: number;
+  total: number;
+  daily: DailyView[];
+  monthly: MonthlyView[];
+}
+
 
 export interface Admin {
   id: number;

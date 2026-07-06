@@ -193,15 +193,51 @@ func (h *PostHandler) Delete(c *fiber.Ctx) error {
 	return ok(c, fiber.StatusOK, fiber.Map{"deleted": true})
 }
 
+func (h *PostHandler) RecordView(c *fiber.Ctx) error {
+	post, err := h.posts.FindBySlug(c.Context(), c.Params("slug"), true)
+	if err != nil {
+		if repository.IsNotFound(err) {
+			return fail(c, fiber.StatusNotFound, "post not found")
+		}
+		return fail(c, fiber.StatusInternalServerError, "failed to fetch post")
+	}
+	if err := h.posts.RecordView(c.Context(), post.ID); err != nil {
+		return fail(c, fiber.StatusInternalServerError, "failed to record view")
+	}
+	// Fetch updated stats
+	stats, err := h.posts.GetViewStats(c.Context(), post.ID)
+	if err != nil {
+		return ok(c, fiber.StatusOK, fiber.Map{"recorded": true})
+	}
+	return ok(c, fiber.StatusOK, dto.PostViewStatsToDTO(stats))
+}
+
+func (h *PostHandler) GetViews(c *fiber.Ctx) error {
+	post, err := h.posts.FindBySlug(c.Context(), c.Params("slug"), false)
+	if err != nil {
+		if repository.IsNotFound(err) {
+			return fail(c, fiber.StatusNotFound, "post not found")
+		}
+		return fail(c, fiber.StatusInternalServerError, "failed to fetch post")
+	}
+	stats, err := h.posts.GetViewStats(c.Context(), post.ID)
+	if err != nil {
+		return fail(c, fiber.StatusInternalServerError, "failed to fetch view stats")
+	}
+	return ok(c, fiber.StatusOK, dto.PostViewStatsToDTO(stats))
+}
+
 func (h *PostHandler) Stats(c *fiber.Ctx) error {
 	stats, err := h.posts.Stats(c.Context())
 	if err != nil {
 		return fail(c, fiber.StatusInternalServerError, "failed to fetch stats")
 	}
 	return ok(c, fiber.StatusOK, dto.StatsDTO{
-		Total:     stats.Total,
-		Published: stats.Published,
-		Drafts:    stats.Drafts,
-		Scheduled: stats.Scheduled,
+		Total:      stats.Total,
+		Published:  stats.Published,
+		Drafts:     stats.Drafts,
+		Scheduled:  stats.Scheduled,
+		TotalViews: stats.TotalViews,
 	})
 }
+

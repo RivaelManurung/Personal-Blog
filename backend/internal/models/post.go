@@ -40,6 +40,7 @@ type Post struct {
 	SEODescription string     `gorm:"column:seo_description;not null;default:''"`
 	CanonicalURL   string     `gorm:"column:canonical_url;not null;default:''"`
 	Tags           []Tag      `gorm:"many2many:post_tags;"`
+	ViewCount      int64      `gorm:"not null;default:0"`
 
 	// SearchVector is a generated tsvector column: read-only, never written by GORM.
 	SearchVector string `gorm:"->;type:tsvector" json:"-"`
@@ -47,3 +48,24 @@ type Post struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+// DailyView represents aggregated views for a single day.
+type DailyView struct {
+	Date  string `json:"date"`
+	Views int    `json:"views"`
+}
+
+// MonthlyView represents aggregated views for a single month.
+type MonthlyView struct {
+	Month string `json:"month"`
+	Views int    `json:"views"`
+}
+
+// PostViewStats holds view counts and time-series view statistics for a post.
+type PostViewStats struct {
+	PostID  int64         `json:"postId"`
+	Total   int64         `json:"total"`
+	Daily   []DailyView   `json:"daily"`
+	Monthly []MonthlyView `json:"monthly"`
+}
+

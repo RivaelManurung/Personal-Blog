@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { FileText, CheckCircle2, PenLine, CalendarClock, Plus, ArrowUpRight, BookOpen } from "lucide-react";
+import { FileText, CheckCircle2, PenLine, CalendarClock, Plus, ArrowUpRight, BookOpen, Eye } from "lucide-react";
 import { getStats, listPosts } from "@/lib/admin/api";
 import { formatDate } from "@/lib/format/date";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ const STAT_CARDS: {
   { key: "published", label: "Published", icon: CheckCircle2, accent: "text-[var(--chart-3)]" },
   { key: "drafts", label: "Drafts", icon: PenLine, accent: "text-[var(--chart-1)]" },
   { key: "scheduled", label: "Scheduled", icon: CalendarClock, accent: "text-[var(--chart-2)]" },
+  { key: "totalViews", label: "Total views", icon: Eye, accent: "text-[var(--chart-4)]" },
 ];
 
 export default async function DashboardPage() {
@@ -53,7 +54,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {STAT_CARDS.map((card) => (
           <Card key={card.key} className="relative overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/30">
             <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
@@ -65,11 +66,12 @@ export default async function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="font-serif text-4xl tabular-nums tracking-tight">{stats[card.key]}</p>
+              <p className="font-serif text-4xl tabular-nums tracking-tight">{(stats[card.key] ?? 0).toLocaleString()}</p>
             </CardContent>
           </Card>
         ))}
       </div>
+
 
       <Card className="transition-all duration-300 hover:shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between">

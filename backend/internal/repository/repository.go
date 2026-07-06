@@ -36,10 +36,11 @@ type SearchResult struct {
 
 // PostStats powers the admin dashboard.
 type PostStats struct {
-	Total     int64
-	Published int64
-	Drafts    int64
-	Scheduled int64
+	Total      int64
+	Published  int64
+	Drafts     int64
+	Scheduled  int64
+	TotalViews int64
 }
 
 // PostRepository — construct with NewPostRepository(db *gorm.DB) PostRepository.
@@ -61,7 +62,12 @@ type PostRepository interface {
 	// SetTags replaces the post's tag associations.
 	SetTags(ctx context.Context, postID int64, tagIDs []int64) error
 	Stats(ctx context.Context) (PostStats, error)
+	// RecordView records a view for the post in post_daily_views and increments view_count.
+	RecordView(ctx context.Context, postID int64) error
+	// GetViewStats retrieves total, daily, and monthly view counts for a post.
+	GetViewStats(ctx context.Context, postID int64) (*models.PostViewStats, error)
 }
+
 
 // CategoryRepository — construct with NewCategoryRepository(db *gorm.DB).
 type CategoryRepository interface {

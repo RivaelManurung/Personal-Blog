@@ -12,6 +12,7 @@ import {
 import { toast } from "sonner";
 import {
   ArrowUpDown,
+  BarChart3,
   ChevronLeft,
   ChevronRight,
   MoreHorizontal,
@@ -55,6 +56,7 @@ import {
 import { StatusBadge } from "@/components/admin/status-badge";
 import { formatDate } from "@/lib/format/date";
 import { deletePostAction } from "@/features/posts/actions";
+import { ViewStatsDialog } from "@/features/views/components/ViewStatsDialog";
 import type { Meta, PostAdminSummary, PostStatus } from "@/types/api";
 
 const STATUS_OPTIONS: { value: string; label: string }[] = [
@@ -78,6 +80,7 @@ export function PostsDataTable({ data, meta, query, status, sort }: PostsDataTab
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(query);
   const [pendingDelete, setPendingDelete] = useState<PostAdminSummary | null>(null);
+  const [analyticsPost, setAnalyticsPost] = useState<PostAdminSummary | null>(null);
   const [isDeleting, startDelete] = useTransition();
 
   // Push URL params; server re-fetches on navigation.
@@ -136,6 +139,15 @@ export function PostsDataTable({ data, meta, query, status, sort }: PostsDataTab
         cell: ({ row }) => <StatusBadge status={row.original.status} />,
       },
       {
+        accessorKey: "viewCount",
+        header: "Views",
+        cell: ({ row }) => (
+          <span className="text-sm font-medium tabular-nums text-muted-foreground">
+            {(row.original.viewCount ?? 0).toLocaleString()}
+          </span>
+        ),
+      },
+      {
         accessorKey: "updatedAt",
         header: "Updated",
         cell: ({ row }) => (
@@ -157,6 +169,15 @@ export function PostsDataTable({ data, meta, query, status, sort }: PostsDataTab
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setAnalyticsPost(row.original);
+                  }}
+                >
+                  <BarChart3 className="size-4" />
+                  Analytics
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href={`/admin/posts/${row.original.id}/edit`}>
                     <Pencil className="size-4" />
@@ -327,6 +348,8 @@ export function PostsDataTable({ data, meta, query, status, sort }: PostsDataTab
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ViewStatsDialog post={analyticsPost} onClose={() => setAnalyticsPost(null)} />
     </div>
   );
 }

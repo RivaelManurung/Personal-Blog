@@ -95,6 +95,7 @@ type PostSummaryDTO struct {
 	ReadingTimeMin int          `json:"readingTimeMin"`
 	PublishedAt    *time.Time   `json:"publishedAt"`
 	Index          *int         `json:"index,omitempty"`
+	ViewCount      int64        `json:"viewCount"`
 }
 
 type PostDetailDTO struct {
@@ -119,6 +120,7 @@ type PostAdminSummaryDTO struct {
 	Category    *CategoryDTO `json:"category"`
 	PublishedAt *time.Time   `json:"publishedAt"`
 	UpdatedAt   time.Time    `json:"updatedAt"`
+	ViewCount   int64        `json:"viewCount"`
 }
 
 type SearchHitDTO struct {
@@ -131,10 +133,28 @@ type SearchHitDTO struct {
 }
 
 type StatsDTO struct {
-	Total     int64 `json:"total"`
-	Published int64 `json:"published"`
-	Drafts    int64 `json:"drafts"`
-	Scheduled int64 `json:"scheduled"`
+	Total      int64 `json:"total"`
+	Published  int64 `json:"published"`
+	Drafts     int64 `json:"drafts"`
+	Scheduled  int64 `json:"scheduled"`
+	TotalViews int64 `json:"totalViews"`
+}
+
+type DailyViewDTO struct {
+	Date  string `json:"date"`
+	Views int    `json:"views"`
+}
+
+type MonthlyViewDTO struct {
+	Month string `json:"month"`
+	Views int    `json:"views"`
+}
+
+type PostViewStatsDTO struct {
+	PostID  int64            `json:"postId"`
+	Total   int64            `json:"total"`
+	Daily   []DailyViewDTO   `json:"daily"`
+	Monthly []MonthlyViewDTO `json:"monthly"`
 }
 
 // CreatePostRequest / UpdatePostRequest share a shape (full replace on update).

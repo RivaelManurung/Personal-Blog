@@ -1,7 +1,7 @@
 import { Container } from "@/components/site/Container";
 import { PillNav } from "@/components/site/PillNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { JsonLd, websiteJsonLd } from "@/components/seo/JsonLd";
+import { JsonLd, websiteJsonLd, personJsonLd } from "@/components/seo/JsonLd";
 
 /**
  * Site chrome: Full width editorial layout spanning edge-to-edge across the viewport
@@ -16,7 +16,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       >
         Skip to content
       </a>
-      <JsonLd data={websiteJsonLd()} />
+      <JsonLd data={[websiteJsonLd(), personJsonLd()]} />
 
       <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/80 backdrop-blur-md transition-all duration-300">
         <Container className="py-4 sm:py-5">

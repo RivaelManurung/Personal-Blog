@@ -273,6 +273,65 @@ func (r *postRepository) Stats(ctx context.Context) (PostStats, error) {
 		Where("status = ?", models.StatusScheduled).Count(&stats.Scheduled).Error; err != nil {
 		return PostStats{}, fmt.Errorf("count scheduled posts: %w", err)
 	}
+	if err := r.db.WithContext(ctx).Model(&models.Post{}).Select("COALESCE(SUM(view_count), 0)").Scan(&stats.TotalViews).Error; err != nil {
+		return PostStats{}, fmt.Errorf("sum total views: %w", err)
+	}
 
 	return stats, nil
 }
+
+func (r *postRepository) RecordView(ctx context.Context, postID int64) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		upsertSQL := `
+			INSERT INTO post_daily_views (post_id, view_date, view_count)
+			VALUES (?, CURRENT_DATE, 1)
+			ON CONFLICT (post_id, view_date)
+			DO UPDATE SET view_count = post_daily_views.view_count + 1
+		`
+		if err := tx.Exec(upsertSQL, postID).Error; err != nil {
+			return fmt.Errorf("upsert daily view: %w", err)
+		}
+		if err := tx.Model(&models.Post{ID: postID}).Update("view_count", gorm.Expr("view_count + 1")).Error; err != nil {
+			return fmt.Errorf("increment total view count: %w", err)
+		}
+		return nil
+	})
+}
+
+func (r *postRepository) GetViewStats(ctx context.Context, postID int64) (*models.PostViewStats, error) {
+	var total int64
+	if err := r.db.WithContext(ctx).Model(&models.Post{}).Where("id = ?", postID).Select("view_count").Scan(&total).Error; err != nil {
+		return nil, fmt.Errorf("get total views: %w", err)
+	}
+
+	var daily []models.DailyView
+	dailySQL := `
+		SELECT TO_CHAR(view_date, 'YYYY-MM-DD') AS date, view_count AS views
+		FROM post_daily_views
+		WHERE post_id = ? AND view_date >= CURRENT_DATE - INTERVAL '30 days'
+		ORDER BY view_date ASC
+	`
+	if err := r.db.WithContext(ctx).Raw(dailySQL, postID).Scan(&daily).Error; err != nil {
+		return nil, fmt.Errorf("get daily views: %w", err)
+	}
+
+	var monthly []models.MonthlyView
+	monthlySQL := `
+		SELECT TO_CHAR(DATE_TRUNC('month', view_date), 'YYYY-MM') AS month, SUM(view_count)::int AS views
+		FROM post_daily_views
+		WHERE post_id = ? AND view_date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '11 months')
+		GROUP BY DATE_TRUNC('month', view_date)
+		ORDER BY DATE_TRUNC('month', view_date) ASC
+	`
+	if err := r.db.WithContext(ctx).Raw(monthlySQL, postID).Scan(&monthly).Error; err != nil {
+		return nil, fmt.Errorf("get monthly views: %w", err)
+	}
+
+	return &models.PostViewStats{
+		PostID:  postID,
+		Total:   total,
+		Daily:   daily,
+		Monthly: monthly,
+	}, nil
+}
+

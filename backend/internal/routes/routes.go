@@ -22,15 +22,18 @@ func Register(app *fiber.App, h Handlers, requireAuth, loginLimiter, refreshLimi
 
 	api := app.Group("/api/v1")
 
-	// ---- Public reads ----
+	// ---- Public reads & actions ----
 	api.Get("/posts", h.Post.List)
 	api.Get("/search", h.Post.Search)
 	api.Get("/posts/:slug", h.Post.GetBySlug)
+	api.Post("/posts/:slug/view", h.Post.RecordView)
+	api.Get("/posts/:slug/views", h.Post.GetViews)
 	api.Get("/categories", h.Taxonomy.ListCategories)
 	api.Get("/categories/:slug/posts", h.Taxonomy.ListCategoryPosts)
 	api.Get("/tags", h.Taxonomy.ListTags)
 	api.Get("/tags/:slug/posts", h.Taxonomy.ListTagPosts)
 	api.Get("/media/:id", h.Media.GetByID)
+
 
 	// ---- Auth ----
 	auth := api.Group("/auth")

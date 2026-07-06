@@ -12,7 +12,9 @@ export function SiteFooter() {
       <Container className="py-14">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
-            <p className="font-display text-2xl text-foreground">{SITE.name}</p>
+            <p className="font-display text-2xl text-foreground">
+              {SITE.name} <span className="text-sm font-sans font-normal text-muted-foreground">({SITE.brandName})</span>
+            </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{SITE.tagline}</p>
             <div className="mt-6">
               <SocialIcons />
@@ -46,7 +48,7 @@ export function SiteFooter() {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 text-xs uppercase tracking-[0.14em] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>
-            &copy; {year} {SITE.name}
+            &copy; {year} {SITE.name} &middot; {SITE.brandName} (rivaelblog)
           </p>
           <p>{SITE.description}</p>
         </div>

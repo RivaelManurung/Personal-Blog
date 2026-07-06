@@ -56,6 +56,7 @@ func PostToSummary(p *models.Post) PostSummaryDTO {
 		Tags:           tagsToDTO(p.Tags),
 		ReadingTimeMin: p.ReadingTimeMin,
 		PublishedAt:    p.PublishedAt,
+		ViewCount:      p.ViewCount,
 	}
 }
 
@@ -89,6 +90,28 @@ func PostToAdminSummary(p *models.Post) PostAdminSummaryDTO {
 		Category:    CategoryToDTO(p.Category, nil),
 		PublishedAt: p.PublishedAt,
 		UpdatedAt:   p.UpdatedAt,
+		ViewCount:   p.ViewCount,
+	}
+}
+
+// PostViewStatsToDTO maps post view stats to API shape.
+func PostViewStatsToDTO(s *models.PostViewStats) PostViewStatsDTO {
+	if s == nil {
+		return PostViewStatsDTO{}
+	}
+	daily := make([]DailyViewDTO, 0, len(s.Daily))
+	for _, d := range s.Daily {
+		daily = append(daily, DailyViewDTO{Date: d.Date, Views: d.Views})
+	}
+	monthly := make([]MonthlyViewDTO, 0, len(s.Monthly))
+	for _, m := range s.Monthly {
+		monthly = append(monthly, MonthlyViewDTO{Month: m.Month, Views: m.Views})
+	}
+	return PostViewStatsDTO{
+		PostID:  s.PostID,
+		Total:   s.Total,
+		Daily:   daily,
+		Monthly: monthly,
 	}
 }
 
@@ -99,3 +122,4 @@ func AdminToDTO(a *models.AdminUser) AdminDTO {
 	}
 	return AdminDTO{ID: a.ID, Email: a.Email, DisplayName: a.DisplayName}
 }
+

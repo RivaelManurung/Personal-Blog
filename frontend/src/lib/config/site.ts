@@ -1,12 +1,27 @@
 /** Public, non-secret site configuration. */
 export const SITE = {
   name: "Rivael Manurung",
+  brandName: "Rivael Blog",
   tagline: "Journeys through life's spectrum",
   description:
-    "A personal editorial blog — reflections, inspiration, and discovery across life's spectrum.",
+    "Rivael Blog (rivaelblog) by Rivael Manurung — A personal editorial blog featuring reflections, inspiration, and discovery across life's spectrum.",
   // `||` (not `??`) so an empty env var (e.g. an unset CI build-arg -> "") also
   // falls back, instead of producing "" and crashing `new URL(SITE.url)`.
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  keywords: [
+    "Rivael Manurung",
+    "Rivael Blog",
+    "rivaelblog",
+    "Rivael",
+    "Manurung",
+    "Personal Blog",
+    "Editorial Blog",
+    "Rivael Manurung Blog",
+    "Software Engineer Blog",
+    "Technology",
+    "Reflections",
+    "Life Spectrum",
+  ],
   nav: [
     { label: "Home", href: "/" },
     { label: "Articles", href: "/articles" },

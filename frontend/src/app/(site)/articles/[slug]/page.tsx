@@ -11,6 +11,7 @@ import { SITE } from "@/lib/config/site";
 import { Container } from "@/components/site/Container";
 import { Prose } from "@/components/article/Prose";
 import { CategoryPill } from "@/components/article/CategoryPill";
+import { ViewTracker } from "@/components/article/ViewTracker";
 import {
   JsonLd,
   blogPostingJsonLd,
@@ -90,7 +91,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
       <Container className="py-12 sm:py-16">
         <header className="mx-auto max-w-3xl text-center">
-          <div className="flex items-center justify-center gap-3 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs uppercase tracking-[0.16em] text-muted-foreground">
             {post.category && (
               <CategoryPill name={post.category.name} slug={post.category.slug} />
             )}
@@ -103,7 +104,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 {post.readingTimeMin} min read
               </span>
             )}
+            <ViewTracker slug={post.slug} initialViews={post.viewCount ?? 0} />
           </div>
+
 
           <h1 className="mt-6 font-display text-[length:var(--text-display)] leading-[1.05] text-foreground">
             {post.title}

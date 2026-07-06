@@ -1,14 +1,15 @@
 import type { MetadataRoute } from "next";
 import { getPosts } from "@/lib/api/posts";
-import { getCategories } from "@/lib/api/taxonomy";
+import { getCategories, getTags } from "@/lib/api/taxonomy";
 import { SITE } from "@/lib/config/site";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [{ items: posts }, categories] = await Promise.all([
+  const [{ items: posts }, categories, tags] = await Promise.all([
     getPosts({ limit: 200, sort: "published_at desc" }),
     getCategories(),
+    getTags(),
   ]);
 
   const now = new Date();
@@ -34,5 +35,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticRoutes, ...postRoutes, ...categoryRoutes];
+  const tagRoutes: MetadataRoute.Sitemap = tags.map((tag) => ({
+    url: `${SITE.url}/tags/${tag.slug}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.5,
+  }));
+
+  return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...tagRoutes];
 }

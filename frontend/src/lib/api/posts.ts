@@ -1,6 +1,6 @@
 import "server-only";
 import { apiGet, apiGetPaginated, ApiError, qs } from "./client";
-import type { Paginated, PostDetail, PostSummary } from "@/types/api";
+import type { Paginated, PostDetail, PostSummary, PostViewStats } from "@/types/api";
 
 const LIST_REVALIDATE = 300; // 5 min ISR; on-demand revalidateTag on publish
 
@@ -13,6 +13,7 @@ interface ListParams {
 function emptyPage<T>(limit = 10): Paginated<T> {
   return { items: [], meta: { page: 1, limit, total: 0, totalPages: 0 } };
 }
+
 
 /**
  * Resilient list fetch: returns an empty page when the backend is unreachable,
@@ -80,3 +81,16 @@ export function getPostsByTag(slug: string, params: ListParams = {}): Promise<Pa
     params.limit,
   );
 }
+
+export async function getPostViews(slug: string): Promise<PostViewStats | null> {
+  try {
+    return await apiGet<PostViewStats>(`/posts/${encodeURIComponent(slug)}/views`, {
+      revalidate: LIST_REVALIDATE,
+      tags: ["posts", `views:${slug}`],
+    });
+  } catch (err) {
+    console.error("[api] getPostViews failed:", err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+
